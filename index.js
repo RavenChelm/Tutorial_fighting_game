@@ -85,11 +85,11 @@ const player = new Fighter({
             frameMax: 6,
         },
         takeHit_right: {
-            imageSrc: './img/player/Sprites/Take Hit_right.png',
+            imageSrc: './img/player/Sprites/Take_Hit_right.png',
             frameMax: 4
         },
         takeHit_left: {
-            imageSrc: './img/player/Sprites/Take Hit_left.png',
+            imageSrc: './img/player/Sprites/Take_Hit_left.png',
             frameMax: 4
         },
         death_right: {
@@ -174,11 +174,11 @@ const enemy = new Fighter({
             frameMax: 4,
         },
         takeHit_right: {
-            imageSrc: './img/enemy/Sprites/Take Hit_right.png',
+            imageSrc: './img/enemy/Sprites/Take_Hit_right.png',
             frameMax: 3
         },
         takeHit_left: {
-            imageSrc: './img/enemy/Sprites/Take Hit_left.png',
+            imageSrc: './img/enemy/Sprites/Take_Hit_left.png',
             frameMax: 3
         },
         death_right: {
