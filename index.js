@@ -328,7 +328,6 @@ function animate() {
 animate()
 decreaseTimer()
 window.addEventListener('keydown', (event) => {
-    console.log(event.key)
     if (!player.dead) {
         switch (event.key) {
             case 'd':
