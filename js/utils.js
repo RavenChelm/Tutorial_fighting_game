@@ -27,7 +27,7 @@ function determineWinner({ player, enemy, timerId }) {
     }
 }
 
-let timer = 60
+let timer = 64
 let timerId
 
 function decreaseTimer() {
@@ -45,10 +45,8 @@ function decreaseTimer() {
 function SwitchMusic(music) {
     switch (music) {
         case 'AfterFight':
-            setTimeout(function() {
-                fight.pause()
-                AfterFight.play()
-            }, 4000)
+            fight.pause()
+            AfterFight.play()
             break
         case 'Fight':
             menu.pause()
