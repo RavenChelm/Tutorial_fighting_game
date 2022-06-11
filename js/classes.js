@@ -50,6 +50,7 @@ class Fighter extends Sprite {
         frameMax = 1,
         offset = { x: 0, y: 0 },
         sprites,
+        sounds,
         attackBox = { offset: {}, width: undefined, height: undefined }
     }) {
         super({
@@ -81,9 +82,9 @@ class Fighter extends Sprite {
         this.frameElapsed = 0
         this.frameHold = 5
         this.dead = false
-
+        this.onGround = false
+        this.fallTime = false
         this.sprites = sprites
-
         for (const sprite in this.sprites) {
             sprites[sprite].image = new Image()
             sprites[sprite].image.src = sprites[sprite].imageSrc
@@ -98,16 +99,16 @@ class Fighter extends Sprite {
         this.attackBox.position.y = this.position.y + this.attackBox.offset.y
         this.attackBox.position.x1 = this.position.x - this.attackBox.offset.x - 80
         this.attackBox.position.y1 = this.position.y + this.attackBox.offset.y
-        context.fillRect(
-            this.attackBox.position.x,
-            this.attackBox.position.y,
-            this.attackBox.width,
-            this.attackBox.height)
-        context.fillRect(
-            this.attackBox.position.x1,
-            this.attackBox.position.y1,
-            this.attackBox.width,
-            this.attackBox.height)
+            // context.fillRect(
+            //     this.attackBox.position.x,
+            //     this.attackBox.position.y,
+            //     this.attackBox.width,
+            //     this.attackBox.height)
+            // context.fillRect(
+            //     this.attackBox.position.x1,
+            //     this.attackBox.position.y1,
+            //     this.attackBox.width,
+            //     this.attackBox.height)
 
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
@@ -116,10 +117,25 @@ class Fighter extends Sprite {
         if (this.position.y + this.velocity.y + this.height >= canvas.height - 97) {
             this.velocity.y = 0
             this.position.y = 331
-        } else this.velocity.y += gravity
+            this.onGround = true
+        } else {
+            this.velocity.y += gravity
+            this.onGround = false
+            this.fallTime = true
+        }
+        if (this.onGround) {
+            if (this.fallTime) {
+                this.fallTime = false
+                sounds.fall.play()
+            }
+        }
+        if (this.onGround && this.velocity.x != 0) { sounds.run.play() }
+
+
     }
 
     attack() {
+        sounds.attack.play()
         if (this.lastKey === 'd' || this.lastKey === 'ArrowRight') {
             this.switchSprite('attack_right')
         }
@@ -127,10 +143,12 @@ class Fighter extends Sprite {
             this.switchSprite('attack_left')
         }
         this.isAttacking = true
+
     }
 
     takeHit() {
         this.health -= 20
+        sounds.hit.play()
         if (this.health <= 0 && (this.lastKey === 'd' || this.lastKey === "ArrowRight")) {
             this.switchSprite('death_right')
         } else if (this.health <= 0 && (this.lastKey === 'a' || this.lastKey === "ArrowLeft")) {
@@ -188,6 +206,7 @@ class Fighter extends Sprite {
                 }
                 break;
             case 'jump_right':
+                sounds.jump.play()
                 if (this.image !== this.sprites.jump_right.image) {
                     this.image = this.sprites.jump_right.image
                     this.frameMax = this.sprites.jump_right.frameMax
@@ -195,6 +214,7 @@ class Fighter extends Sprite {
                 }
                 break;
             case 'jump_left':
+                sounds.jump.play()
                 if (this.image !== this.sprites.jump_left.image) {
                     this.image = this.sprites.jump_left.image
                     this.frameMax = this.sprites.jump_left.frameMax
@@ -207,6 +227,7 @@ class Fighter extends Sprite {
                     this.frameMax = this.sprites.fall_right.frameMax
                     this.frameCurrent = 0
                 }
+
                 break;
             case 'fall_left':
                 if (this.image !== this.sprites.fall_left.image) {

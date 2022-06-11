@@ -9,7 +9,17 @@ context.fillRect(0, 0, canvas.width, canvas.height)
 const menu = new Audio('./music/menu.mp3')
 const AfterFight = new Audio('./music/AfterFight.mp3')
 const fight = new Audio('./music/fight.mp3')
-
+menu.volume = 0.7
+AfterFight.volume = 0.7
+fight.volume = 0.7
+const sounds = {
+    attack: new Audio('./sound/attack.mp3'),
+    fall: new Audio('./sound/fall.mp3'),
+    hit: new Audio('./sound/hit.mp3'),
+    jump: new Audio('./sound/jump.mp3'),
+    run: new Audio('./sound/run.mp3'),
+    test: new Audio('./music/fight.mp3')
+}
 const gravity = 0.7
 const background = new Sprite({
     position: {
