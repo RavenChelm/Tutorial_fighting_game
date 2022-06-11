@@ -186,7 +186,7 @@ const enemy = new Fighter({
             frameMax: 3
         },
         death_right: {
-            imageSrc: './img/enemy/Sprites/Death_right.png',
+            imageSrc: './img/enemy/Sprites/Death_rsight.png',
             frameMax: 7
         },
         death_left: {
