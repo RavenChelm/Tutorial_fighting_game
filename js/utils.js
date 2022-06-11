@@ -16,7 +16,6 @@ function rectangularCollision({ rectangle1, rectangle2 }) {
 
 function determineWinner({ player, enemy, timerId }) {
     clearTimeout(timerId)
-    SwitchMusic('AfterFight')
     document.querySelector('#displayText').style.display = 'flex'
     if (player.health === enemy.health) {
         document.querySelector('#displayText').innerHTML = 'Tie'
@@ -27,7 +26,7 @@ function determineWinner({ player, enemy, timerId }) {
     }
 }
 
-let timer = 64
+let timer = 61
 let timerId
 
 function decreaseTimer() {
