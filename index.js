@@ -6,6 +6,10 @@ canvas.height = 576
 
 context.fillRect(0, 0, canvas.width, canvas.height)
 
+const menu = new Audio('./music/menu.mp3')
+const AfterFight = new Audio('./music/AfterFight.mp3')
+const fight = new Audio('./music/fight.mp3')
+
 const gravity = 0.7
 const background = new Sprite({
     position: {
@@ -214,120 +218,137 @@ const keys = {
     }
 }
 
+let play = false
+let playNow = false
+
 function animate() {
     window.requestAnimationFrame(animate)
     context.fillStyle = 'black'
     context.fillRect(0, 0, canvas.width, canvas.height)
-    background.update()
-    shop.update()
-    context.fillStyle = 'rgba(255, 255, 255, 0.1)'
-    context.fillRect(0, 0, canvas.width, canvas.height)
-    player.update()
-    enemy.update()
+    if (!playNow) {
+        SwitchMusic('Menu')
+    }
+    if (play && !playNow) {
+        playNow = true
+        document.querySelector('#displayText').style.display = 'none'
+        document.querySelector('#interface').style.display = 'flex'
+        SwitchMusic('Fight')
+        decreaseTimer()
+    } else if (play && playNow) {
+        background.update()
+        shop.update()
+        context.fillStyle = 'rgba(255, 255, 255, 0.1)'
+        context.fillRect(0, 0, canvas.width, canvas.height)
+        player.update()
+        enemy.update()
 
 
-    //player movement
-    player.velocity.x = 0
-    if (keys.a.pressed && player.lastKey === 'a') {
-        if (player.position.x <= 0) {
-            player.velocity.x = 0
-            player.switchSprite('run_left')
+
+        //player movement
+        player.velocity.x = 0
+        if (keys.a.pressed && player.lastKey === 'a') {
+            if (player.position.x <= 0) {
+                player.velocity.x = 0
+                player.switchSprite('run_left')
+            } else {
+                player.velocity.x = -5
+                player.switchSprite('run_left')
+            }
+        } else if (keys.d.pressed && player.lastKey === 'd') {
+            if (player.position.x >= 955) {
+                player.velocity.x = 0
+                player.switchSprite('run_right')
+            } else {
+                player.velocity.x = 5
+                player.switchSprite('run_right')
+            }
+        } else if (player.lastKey === 'd') {
+            player.switchSprite('idle_right')
         } else {
-            player.velocity.x = -5
-            player.switchSprite('run_left')
+            player.switchSprite('idle_left')
         }
-    } else if (keys.d.pressed && player.lastKey === 'd') {
-        if (player.position.x >= 955) {
-            player.velocity.x = 0
-            player.switchSprite('run_right')
+        if (player.velocity.y < 0 && (player.velocity.x > 0 || player.lastKey === 'd')) {
+            player.switchSprite('jump_right')
+        } else if (player.velocity.y < 0 && (player.velocity.x < 0 || player.lastKey === 'a')) {
+            player.switchSprite('jump_left')
+        } else if (player.velocity.y > 0 && (player.velocity.x > 0 || player.lastKey === 'd')) {
+            player.switchSprite('fall_right')
+        } else if (player.velocity.y > 0 && (player.velocity.x < 0 || player.lastKey === 'a')) {
+            player.switchSprite('fall_left')
+        }
+
+        //enemy movement
+        enemy.velocity.x = 0
+        if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
+            if (enemy.position.x <= 0) {
+                enemy.velocity.x = 0
+                enemy.switchSprite('run_left')
+            } else {
+                enemy.velocity.x = -5
+                enemy.switchSprite('run_left')
+            }
+        } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
+            if (enemy.position.x >= 955) {
+                enemy.velocity.x = 0
+                enemy.switchSprite('run_right')
+            } else {
+                enemy.velocity.x = 5
+                enemy.switchSprite('run_right')
+            }
+        } else if (enemy.lastKey === 'ArrowRight') {
+            enemy.switchSprite('idle_right')
         } else {
-            player.velocity.x = 5
-            player.switchSprite('run_right')
+            enemy.switchSprite('idle_left')
         }
-    } else if (player.lastKey === 'd') {
-        player.switchSprite('idle_right')
-    } else {
-        player.switchSprite('idle_left')
-    }
-    if (player.velocity.y < 0 && (player.velocity.x > 0 || player.lastKey === 'd')) {
-        player.switchSprite('jump_right')
-    } else if (player.velocity.y < 0 && (player.velocity.x < 0 || player.lastKey === 'a')) {
-        player.switchSprite('jump_left')
-    } else if (player.velocity.y > 0 && (player.velocity.x > 0 || player.lastKey === 'd')) {
-        player.switchSprite('fall_right')
-    } else if (player.velocity.y > 0 && (player.velocity.x < 0 || player.lastKey === 'a')) {
-        player.switchSprite('fall_left')
-    }
-
-    //enemy movement
-    enemy.velocity.x = 0
-    if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
-        if (enemy.position.x <= 0) {
-            enemy.velocity.x = 0
-            enemy.switchSprite('run_left')
-        } else {
-            enemy.velocity.x = -5
-            enemy.switchSprite('run_left')
+        if (enemy.velocity.y < 0 && (enemy.velocity.x > 0 || enemy.lastKey === 'ArrowRight')) {
+            enemy.switchSprite('jump_right')
+        } else if (enemy.velocity.y < 0 && (enemy.velocity.x < 0 || enemy.lastKey === 'ArrowLeft')) {
+            enemy.switchSprite('jump_left')
+        } else if (enemy.velocity.y > 0 && (enemy.velocity.x > 0 || enemy.lastKey === 'ArrowRight')) {
+            enemy.switchSprite('fall_right')
+        } else if (enemy.velocity.y > 0 && (enemy.velocity.x < 0 || enemy.lastKey === 'ArrowLeft')) {
+            enemy.switchSprite('fall_left')
         }
-    } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
-        if (enemy.position.x >= 955) {
-            enemy.velocity.x = 0
-            enemy.switchSprite('run_right')
-        } else {
-            enemy.velocity.x = 5
-            enemy.switchSprite('run_right')
+
+        //detect Collision  
+        if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: enemy
+            }) && player.isAttacking && player.frameCurrent === 4) {
+            enemy.takeHit()
+            player.isAttacking = false
+            gsap.to('#enemyHealth', {
+                width: enemy.health + '%'
+            })
         }
-    } else if (enemy.lastKey === 'ArrowRight') {
-        enemy.switchSprite('idle_right')
-    } else {
-        enemy.switchSprite('idle_left')
-    }
-    if (enemy.velocity.y < 0 && (enemy.velocity.x > 0 || enemy.lastKey === 'ArrowRight')) {
-        enemy.switchSprite('jump_right')
-    } else if (enemy.velocity.y < 0 && (enemy.velocity.x < 0 || enemy.lastKey === 'ArrowLeft')) {
-        enemy.switchSprite('jump_left')
-    } else if (enemy.velocity.y > 0 && (enemy.velocity.x > 0 || enemy.lastKey === 'ArrowRight')) {
-        enemy.switchSprite('fall_right')
-    } else if (enemy.velocity.y > 0 && (enemy.velocity.x < 0 || enemy.lastKey === 'ArrowLeft')) {
-        enemy.switchSprite('fall_left')
-    }
 
-    //detect Collision  
-    if (rectangularCollision({
-            rectangle1: player,
-            rectangle2: enemy
-        }) && player.isAttacking && player.frameCurrent === 4) {
-        enemy.takeHit()
-        player.isAttacking = false
-        gsap.to('#enemyHealth', {
-            width: enemy.health + '%'
-        })
-    }
+        if (player.isAttacking && player.frameCurrent === 4) {
+            player.isAttacking = false
+        }
 
-    if (player.isAttacking && player.frameCurrent === 4) {
-        player.isAttacking = false
+        if (rectangularCollision({
+                rectangle1: enemy,
+                rectangle2: player
+            }) && enemy.isAttacking && enemy.frameCurrent === 2) {
+            enemy.isAttacking = false
+            player.takeHit()
+            gsap.to('#playerHealth', {
+                width: player.health + '%'
+            })
+        }
+        if (enemy.isAttacking && enemy.frameCurrent === 2) {
+            enemy.isAttacking = false
+        }
+        //end gane based on health
+        if (enemy.health <= 0 || player.health <= 0) determineWinner({ player, enemy, timerId })
     }
-
-    if (rectangularCollision({
-            rectangle1: enemy,
-            rectangle2: player
-        }) && enemy.isAttacking && enemy.frameCurrent === 2) {
-        enemy.isAttacking = false
-        player.takeHit()
-        gsap.to('#playerHealth', {
-            width: player.health + '%'
-        })
-    }
-    if (enemy.isAttacking && enemy.frameCurrent === 2) {
-        enemy.isAttacking = false
-    }
-    //end gane based on health
-    if (enemy.health <= 0 || player.health <= 0) determineWinner({ player, enemy, timerId })
 }
-
 animate()
-decreaseTimer()
+
+
 window.addEventListener('keydown', (event) => {
+    play = true
+    console.log('work')
     if (!player.dead) {
         switch (event.key) {
             case 'd':
