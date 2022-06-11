@@ -352,7 +352,7 @@ function animate() {
         //end gane based on health
         if (enemy.health <= 0 || player.health <= 0) determineWinner({ player, enemy, timerId })
     }
-    if (timer === 0) { SwitchMusic("AfterFight") }
+    if (timer === 0 || player.dead || enemy.dead) { SwitchMusic("AfterFight") }
 }
 animate()
 
